@@ -1,0 +1,75 @@
+Automated File Ingestion & Lifecycle Management
+
+This project implements a fully automated, low-touch data ingestion and file-management pipeline using **Microsoft Power Automate** and **OneDrive for Business**.  
+The objective is to reliably receive, clean, store, and manage raw client data files prior to downstream SQL and Python processing.
+
+---
+1. Daily File Ingestion Automation (Completed)
+
+Purpose
+To automatically collect raw data files sent daily by clients via email and store them in a controlled, auditable structure without manual intervention.
+
+### Process Overview
+1. Client sends a daily email containing an Excel (.xlsx) file with raw reconciliation data.
+2. Power Automate monitors the mailbox for incoming emails that meet defined conditions (sender, subject, attachment type).
+3. When a qualifying email is received:
+   - The Excel attachment is extracted.
+   - The file is saved to a designated **Incoming** folder in OneDrive for Business.
+4. A secondary automation step:
+   - Creates a controlled copy of the file in a **Processed** folder.
+   - Executes an Office Script to remove unnecessary worksheets and standardize the structure.
+5. The cleaned file is saved automatically and made available for downstream systems.
+
+Outcome
+- Eliminates manual downloading and saving of files
+- Ensures consistent file naming and storage
+- Guarantees daily data availability
+- Reduces operational risk caused by human error
+
+---
+
+2. Weekly File Cleanup & Maintenance Automation (Completed)
+
+Purpose
+To manage file growth, prevent data duplication, and maintain a clean working environment while preserving the latest usable dataset.
+
+Process Overview
+1. A scheduled Power Automate flow runs weekly.
+2. The automation:
+   - Identifies outdated or superseded files in the Processed folder.
+   - Deletes obsolete files based on defined retention rules.
+   - Preserves the most recent validated dataset.
+3. Master files are refreshed and saved to ensure alignment with incoming daily data.
+
+Outcome
+- Prevents uncontrolled file accumulation
+- Maintains a clean and predictable folder structure
+- Reduces storage overhead
+- Ensures SQL and analytics layers always reference current data
+
+---
+
+3. Design Principles
+
+- Automation-first architecture
+- Zero disruption to existing client workflows
+- No additional licensing cost
+- Event-driven processing
+- Clear separation between raw, processed, and master data
+- Prepared for seamless SQL and Python integration
+
+---
+
+4. Current Architecture (Pre-SQL / Pre-Python)
+
+Client Email
+     ↓
+Power Automate (Email Trigger)
+     ↓
+OneDrive (/Incoming)
+     ↓
+Power Automate (File Copy + Script Execution)
+     ↓
+OneDrive (/Processed)
+     ↓
+Weekly Cleanup & Refresh Automation
